@@ -11,7 +11,9 @@
 #include <iostream>
 using namespace std;
 #include "sort.hh"
+#include <string.h>
 
+/*
 void parallelfor(){
 	int* a = new int[6];
 	int i;
@@ -19,7 +21,7 @@ void parallelfor(){
 	#pragma omp parallel shared (a) private (i)
 	{
 
-		#pragma omp for 
+		#pragma omp for
 		for (i = 0; i < 6; ++i) {
 			printf("%d ", i);
 			a[i] += i;
@@ -34,6 +36,7 @@ void helloworld(){
 		printf("hello, world!\n"); // Execute in parallel
 	} // Implicit barrier/join
 }
+*/
 
 void print_keytype(keytype* values, int size){
 	for(int i = 0; i< size; i++){
@@ -79,7 +82,7 @@ keytype* mergesort(int N, keytype* A, int from, int to){
 		keytype* array = new keytype[N];
 		for(int i = 0; i< N; i++){
 			array[i] = A[from + i];
-		}		
+		}
 		cout << "small input" << endl;
 		print_keytype(array, N);
 		return array;
@@ -88,10 +91,10 @@ keytype* mergesort(int N, keytype* A, int from, int to){
 	keytype* leftsorted = mergesort(mid-from + 1, A, from, mid);
 	keytype* rightsorted = mergesort(to-mid, A, mid+1, to);
 	cout << "left sorted" << endl;
-	print_keytype(leftsorted, mid+1);
+	print_keytype(leftsorted, mid-from + 1);
 	cout << "right sorted" << endl;
-	print_keytype(rightsorted, N-mid-1);
-	return merge(leftsorted, mid+1, rightsorted, N-mid-1);
+	print_keytype(rightsorted, to-mid);
+	return merge(leftsorted, mid-from + 1, rightsorted, to-mid);
 }
 
 
@@ -103,9 +106,10 @@ void parallelSort (int N, keytype* A){
 	keytype* merged = mergesort(N, A, 0, N-1);
 	cout << "sorted" << endl;
 	print_keytype(merged, N);
-	A = b
+        for(int i=0;i<N;i++)
+        {
+         A[i] = merged[i];
+        }
+        //memcpy(A,merged,N);
+	//A = b
 }
-
-
-/* eof */
-
