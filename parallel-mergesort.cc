@@ -101,15 +101,13 @@ keytype* mergesort(int N, keytype* A, int from, int to){
 void parallelSort (int N, keytype* A){
 //	helloworld();
 //	parallelfor();
-	cout << "input" << endl;
-	print_keytype(A, N);
+//	cout << "input" << endl;
+//	print_keytype(A, N);
 	keytype* merged = mergesort(N, A, 0, N-1);
 	cout << "sorted" << endl;
-	print_keytype(merged, N);
+//	print_keytype(merged, N);
         for(int i=0;i<N;i++)
         {
          A[i] = merged[i];
         }
-        //memcpy(A,merged,N);
-	//A = b
 }
