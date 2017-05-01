@@ -77,6 +77,46 @@ keytype* merge(keytype* leftsorted, int left_size, keytype* rightsorted, int rig
 	return merged;
 }
 
+
+int binary_search(keytype* B, int value){
+	
+
+}
+
+
+
+
+
+
+keytype* pmerge(keytype* A, int size1, keytype* B, int size2){
+	int vindex = size1 / 2;
+	keytype v = A[vindex];
+	keytype* A2 = A + vindex + 1;
+	int k = binary_search(A+size1, v);
+	keytype* B2 = B + k
+	keytype* c1 = pmerge(A, vindex, B, k);
+	int c1size = vindex + k;
+	keytype* c2 = pmerge(A2, size1 - vindex - 1, B2, size2 - k);
+	int c2size = size1 - vindex - 1 + size2 - k;
+	return combine(c1, c1size, v, c2, c2size);
+}
+
+
+
+
+void pmergesort(int N, ketype* A){
+	if( N < 2){
+		return;
+	}
+	int mid = N / 2;
+	keytype* leftsorted = pmergesort(mid, A);
+	keytype* rightsorted = pmergesort(N-mid, A+mid);
+	pmerge(A, mid, A+ mid, N-mid);
+	return;
+}
+
+
+
 keytype* mergesort(int N, keytype* A, int from, int to){
 	if( N < 2){
 		keytype* array = new keytype[N];
@@ -103,11 +143,10 @@ void parallelSort (int N, keytype* A){
 //	parallelfor();
 //	cout << "input" << endl;
 //	print_keytype(A, N);
-	keytype* merged = mergesort(N, A, 0, N-1);
-	cout << "sorted" << endl;
+	merged = pmergesort(N, A);
+//	cout << "sorted" << endl;
 //	print_keytype(merged, N);
-        for(int i=0;i<N;i++)
-        {
-         A[i] = merged[i];
-        }
+//        for(int i=0;i<N;i++){
+//        	A[i] = merged[i];
+//        }
 }
