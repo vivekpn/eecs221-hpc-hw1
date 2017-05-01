@@ -71,8 +71,8 @@ keytype* merge(keytype* leftsorted, int left_size, keytype* rightsorted, int rig
 			ptr2++;
 		}
 	}
-	cout << "merged" << endl;
-	print_keytype(merged, left_size + right_size);
+//	cout << "merged" << endl;
+//	print_keytype(merged, left_size + right_size);
 
 	return merged;
 }
@@ -83,17 +83,17 @@ keytype* mergesort(int N, keytype* A, int from, int to){
 		for(int i = 0; i< N; i++){
 			array[i] = A[from + i];
 		}
-		cout << "small input" << endl;
-		print_keytype(array, N);
+//		cout << "small input" << endl;
+//		print_keytype(array, N);
 		return array;
 	}
 	int mid = (from + to)/2;
 	keytype* leftsorted = mergesort(mid-from + 1, A, from, mid);
 	keytype* rightsorted = mergesort(to-mid, A, mid+1, to);
-	cout << "left sorted" << endl;
-	print_keytype(leftsorted, mid-from + 1);
-	cout << "right sorted" << endl;
-	print_keytype(rightsorted, to-mid);
+//	cout << "left sorted" << endl;
+//	print_keytype(leftsorted, mid-from + 1);
+//	cout << "right sorted" << endl;
+//	print_keytype(rightsorted, to-mid);
 	return merge(leftsorted, mid-from + 1, rightsorted, to-mid);
 }
 
