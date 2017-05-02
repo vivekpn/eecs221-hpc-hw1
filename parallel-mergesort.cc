@@ -184,18 +184,20 @@ keytype* pmergesort(int N, keytype* A, int level){
 	}
 	int mid = N / 2;
 	keytype* leftsorted;
-	#pragma omp task
+//	#pragma omp task
 	{
 		leftsorted = pmergesort(mid, A, level + 1);
 	}
 	keytype* rightsorted = pmergesort(N-mid, A+mid, level + 1);	
 	
-	#pragma omp taskwait
+//	#pragma omp taskwait
 
+/*
 	cout << "left sorted" << endl;
 	print_keytype(leftsorted, mid);
 	cout << "right sorted" << endl;
 	print_keytype(rightsorted, N-mid);
+*/
 		
 	keytype* returned = pmerge(leftsorted, mid, rightsorted, N-mid, level + 1);
 	return returned;
