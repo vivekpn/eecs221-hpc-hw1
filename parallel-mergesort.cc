@@ -78,22 +78,56 @@ keytype* merge(keytype* leftsorted, int left_size, keytype* rightsorted, int rig
 }
 
 
-int binary_search(keytype* B, int value){
-	
-
+int binary_search(keytype* B, int size, int value){
+	int left = 0;
+	int right = size;
+	int partition = 0;
+	while(left < right){
+		int mid = (left + right) / 2;
+		if(B[mid] == value) {
+			return mid;
+		}
+		if(B[mid] < value) {
+			left = mid + 1;
+		} else {
+			right = mid - 1;
+		}
+	}
+	return left;
 }
 
 
-
-
+keytype* combine(keytype* c1, int size1,keytype v, keytype* c2, int size2){
+        int i=0;  
+	    keytype* array = new keytype[size1+size2+1];
+        for(i=0;i<size1;i++)
+        array[i] = c1[i];
+         
+        array[i] = v;
+        i++;
+         
+        for(int j=0;j<size2;j++)
+        {
+        array[i++] = c2[j];
+        }
+        return array;
+           
+}
 
 
 keytype* pmerge(keytype* A, int size1, keytype* B, int size2){
-	int vindex = size1 / 2;
+        if(size1 == 0)
+        	return B;
+        
+
+	if (size2 ==0)
+        	return A;
+        
+        int vindex = size1 / 2;
 	keytype v = A[vindex];
 	keytype* A2 = A + vindex + 1;
-	int k = binary_search(A+size1, v);
-	keytype* B2 = B + k
+	int k = binary_search(B, size2, v);
+	keytype* B2 = B + k;
 	keytype* c1 = pmerge(A, vindex, B, k);
 	int c1size = vindex + k;
 	keytype* c2 = pmerge(A2, size1 - vindex - 1, B2, size2 - k);
@@ -104,15 +138,14 @@ keytype* pmerge(keytype* A, int size1, keytype* B, int size2){
 
 
 
-void pmergesort(int N, ketype* A){
+keytype* pmergesort(int N, keytype* A){
 	if( N < 2){
-		return;
+		return A;
 	}
 	int mid = N / 2;
 	keytype* leftsorted = pmergesort(mid, A);
 	keytype* rightsorted = pmergesort(N-mid, A+mid);
-	pmerge(A, mid, A+ mid, N-mid);
-	return;
+	return pmerge(leftsorted, mid, rightsorted, N-mid);
 }
 
 
@@ -141,12 +174,12 @@ keytype* mergesort(int N, keytype* A, int from, int to){
 void parallelSort (int N, keytype* A){
 //	helloworld();
 //	parallelfor();
-//	cout << "input" << endl;
-//	print_keytype(A, N);
-	merged = pmergesort(N, A);
-//	cout << "sorted" << endl;
-//	print_keytype(merged, N);
-//        for(int i=0;i<N;i++){
-//        	A[i] = merged[i];
-//        }
+	cout << "input" << endl;
+	print_keytype(A, N);
+	keytype* merged = pmergesort(N, A);
+	cout << "sorted" << endl;
+	print_keytype(merged, N);
+        for(int i=0;i<N;i++){
+        	A[i] = merged[i];
+        }
 }
