@@ -1,0 +1,67 @@
+Script began: Mon May 1 22:37:49 PDT 2017
+Node: compute-13-3.local
+Current directory: /data/users/vpnaraya/eecs221-hpc-hw1
+
+=== Running 5 trials of Mergesort on 10 million elements ... ===
+*** Trial 1 ***
+
+N == 10000000
+
+Sequential: 2.05081 seconds ==> 4.87613 million keys per second
+	(Array is sorted.)
+Number of threads:1
+Maximum function call depth:0
+Parallel sort: 22.3259 seconds ==> 0.447911 million keys per second
+	(Array is sorted.)
+	(Arrays are equal.)
+
+*** Trial 2 ***
+
+N == 10000000
+
+Sequential: 2.09661 seconds ==> 4.7696 million keys per second
+	(Array is sorted.)
+Number of threads:1
+Maximum function call depth:0
+Parallel sort: 22.434 seconds ==> 0.445752 million keys per second
+	(Array is sorted.)
+	(Arrays are equal.)
+
+*** Trial 3 ***
+
+N == 10000000
+
+Sequential: 2.05035 seconds ==> 4.87722 million keys per second
+	(Array is sorted.)
+Number of threads:1
+Maximum function call depth:0
+Parallel sort: 22.332 seconds ==> 0.447788 million keys per second
+	(Array is sorted.)
+	(Arrays are equal.)
+
+*** Trial 4 ***
+
+N == 10000000
+
+Sequential: 2.10146 seconds ==> 4.75859 million keys per second
+	(Array is sorted.)
+Number of threads:1
+Maximum function call depth:0
+Parallel sort: 22.3886 seconds ==> 0.446656 million keys per second
+	(Array is sorted.)
+	(Arrays are equal.)
+
+*** Trial 5 ***
+
+N == 10000000
+
+Sequential: 2.05026 seconds ==> 4.87743 million keys per second
+	(Array is sorted.)
+Number of threads:1
+Maximum function call depth:0
+Parallel sort: 22.3544 seconds ==> 0.44734 million keys per second
+	(Array is sorted.)
+	(Arrays are equal.)
+
+
+=== Done! ===
