@@ -206,20 +206,24 @@ keytype* mergesort(int N, keytype* A, int from, int to){
 }
 
 void parallelSort (int N, keytype* A){
+	keytype* merged;
 	#pragma omp parallel
 	{ 
 		#pragma omp master
 		{
-			int threads = omp_get_max_threads();
-			cout << "Maximum number of threads:" << threads << endl;
+			int threads = omp_get_num_threads();
+			cout << "Number of threads:" << threads << endl;
 			depth = log2(threads);
 			cout << "Maximum function call depth:" << depth << endl;			
 		}
 		#pragma omp single nowait
-		keytype* merged = pmergesort(N, A, 0);
-	 	#pragma omp for shared (A,N, merged) private (i)
-		for(int i=0;i<N;i++){
-			A[i] = merged[i];
-		}
+		merged = pmergesort(N, A, 0);
+//	 	#pragma omp for shared (A,N, merged) private (i)
 	}
+	
+	for(int i=0;i<N;i++){
+		A[i] = merged[i];
+	}
+
+
 }
