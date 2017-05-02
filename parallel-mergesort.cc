@@ -153,6 +153,7 @@ keytype* pmerge(keytype* A, int size1, keytype* B, int size2, int level){
 	c1 = pmerge(A, vindex, B, k, level + 1);
 	int c1size = vindex + k;
 	keytype* c2 = pmerge(A2, size1 - vindex - 1, B2, size2 - k,  level + 1);
+	
 	int c2size = size1 - vindex - 1 + size2 - k;
 //	#pragma omp taskwait
 	return combine(c1, c1size, v, c2, c2size);
@@ -184,9 +185,18 @@ keytype* pmergesort(int N, keytype* A, int level){
 	int mid = N / 2;
 	keytype* leftsorted;
 	#pragma omp task
-	leftsorted = pmergesort(mid, A, level + 1);
+	{
+		leftsorted = pmergesort(mid, A, level + 1);
+	}
 	keytype* rightsorted = pmergesort(N-mid, A+mid, level + 1);	
+	
 	#pragma omp taskwait
+
+	cout << "left sorted" << endl;
+	print_keytype(leftsorted, mid);
+	cout << "right sorted" << endl;
+	print_keytype(rightsorted, N-mid);
+		
 	keytype* returned = pmerge(leftsorted, mid, rightsorted, N-mid, level + 1);
 	return returned;
 }
@@ -202,7 +212,7 @@ keytype* mergesort(int N, keytype* A, int from, int to){
 	}
 	int mid = (from + to)/2;
 	keytype* leftsorted = mergesort(mid-from + 1, A, from, mid);
-	keytype* rightsorted = mergesort(to-mid, A, mid+1, to);
+	keytype* rightsorted = mergesort(to-mid, A, mid+1, to);	
 	return merge(leftsorted, mid-from + 1, rightsorted, to-mid);
 }
 
@@ -218,7 +228,9 @@ void parallelSort (int N, keytype* A){
 			cout << "Maximum function call depth:" << depth << endl;			
 		}
 		#pragma omp single
-		merged = pmergesort(N, A, 0);
+		{
+			merged = pmergesort(N, A, 0);
+		}
 //	 	#pragma omp for shared (A,N, merged) private (i)
 	}
 	
