@@ -3,10 +3,19 @@
 #include <stdlib.h>
 #include <omp.h>
 #include <iostream>
-using namespace std;
 #include "sort.hh"
 #include <string.h>
+#include <math.h>
 
+using namespace std;
+
+void print_keytype(keytype* values, int size);
+keytype* merge(keytype* leftsorted, int left_size, keytype* rightsorted, int right_size);
+int binary_insert(keytype* B, int size, keytype value);
+keytype* pmergesort(int N, keytype* A);
+keytype* mergesort(int N, keytype* A, int from, int to);
+
+int depth = 5; // MAX_FUNCTION_CALL_DEPTH for parallelizing.
 
 /*
 void parallelfor(){
@@ -102,7 +111,31 @@ keytype* combine(keytype* c1, int size1,keytype v, keytype* c2, int size2){
 
 }
 
-keytype* pmerge(keytype* A, int size1, keytype* B, int size2){
+keytype* smerge(keytype* A, int size1, keytype* B, int size2){
+    if(size1 == 0)
+    	return B;
+
+	if (size2 ==0)
+    	return A;
+
+    int vindex = size1 / 2;
+	keytype v = A[vindex];
+	keytype* A2 = A + vindex + 1;
+	int k = binary_insert(B, size2, v);
+	keytype* B2 = B + k;
+	keytype* c1 = smerge(A, vindex, B, k );
+	int c1size = vindex + k;
+	keytype* c2 = smerge(A2, size1 - vindex - 1, B2, size2 - k);
+	int c2size = size1 - vindex - 1 + size2 - k;
+	return combine(c1, c1size, v, c2, c2size);
+}
+
+
+keytype* pmerge(keytype* A, int size1, keytype* B, int size2, int level){
+	if( level > depth){
+		return smerge(A, size1, B, size2);
+	}
+	
     if(size1 == 0)
     	return B;
 
@@ -116,28 +149,47 @@ keytype* pmerge(keytype* A, int size1, keytype* B, int size2){
 	int k = binary_insert(B, size2, v);
 	keytype* B2 = B + k;
 	#pragma omp task
-	keytype* c1 = pmerge(A, vindex, B, k );
+	keytype* c1 = pmerge(A, vindex, B, k, level + 1);
 	int c1size = vindex + k;
-	keytype* c2 = pmerge(A2, size1 - vindex - 1, B2, size2 - k);
+	keytype* c2 = pmerge(A2, size1 - vindex - 1, B2, size2 - k,  level + 1);
 	int c2size = size1 - vindex - 1 + size2 - k;
 	#pragma omp taskwait
 	return combine(c1, c1size, v, c2, c2size);
 }
 
-keytype* pmergesort(int N, keytype* A){
+
+keytype* smergesort(int N, keytype* A){		
+	if( N < 2){
+		return A;
+	}
+	int mid = N / 2;
+	keytype* leftsorted;
+	leftsorted = smergesort(mid, A);
+	keytype* rightsorted = smergesort(N-mid, A+mid);	
+	keytype* returned = smerge(leftsorted, mid, rightsorted, N-mid);
+	return returned;
+}
+
+
+
+keytype* pmergesort(int N, keytype* A, int level){		
+	if( level > depth ){
+		return smergesort(N, A);
+	}
+	
 	if( N < 2){
 		return A;
 	}
 	int mid = N / 2;
 	keytype* leftsorted;
 	#pragma omp task
-	leftsorted = pmergesort(mid, A);
-	keytype* rightsorted = pmergesort(N-mid, A+mid);	
+	leftsorted = pmergesort(mid, A, level + 1);
+	keytype* rightsorted = pmergesort(N-mid, A+mid, level + 1);	
 	#pragma omp taskwait
-	keytype* returned = pmerge(leftsorted, mid, rightsorted, N-mid);
+	keytype* returned = pmerge(leftsorted, mid, rightsorted, N-mid, level + 1);
 	return returned;
-
 }
+
 
 keytype* mergesort(int N, keytype* A, int from, int to){
 	if( N < 2){
@@ -156,8 +208,15 @@ keytype* mergesort(int N, keytype* A, int from, int to){
 void parallelSort (int N, keytype* A){
 	#pragma omp parallel
 	{ 
+		#pragma omp master
+		{
+			int threads = omp_get_max_threads();
+			cout << "Maximum number of threads:" << threads << endl;
+			depth = log2(threads);
+			cout << "Maximum function call depth:" << depth << endl;			
+		}
 		#pragma omp single nowait
-		keytype* merged = pmergesort(N, A);
+		keytype* merged = pmergesort(N, A, 0);
 	 	#pragma omp for shared (A,N, merged) private (i)
 		for(int i=0;i<N;i++){
 			A[i] = merged[i];
