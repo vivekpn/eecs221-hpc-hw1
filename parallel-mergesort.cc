@@ -1,9 +1,3 @@
-/**
- *  \file parallel-mergesort.cc
- *
- *  \brief Implement your parallel mergesort in this file.
- */
-
 #include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -12,6 +6,7 @@
 using namespace std;
 #include "sort.hh"
 #include <string.h>
+
 
 /*
 void parallelfor(){
@@ -78,12 +73,11 @@ keytype* merge(keytype* leftsorted, int left_size, keytype* rightsorted, int rig
 }
 
 
-int binary_search(keytype* B, int size, int value){
+int binary_search(keytype* B, int size, keytype value){
 	int left = 0;
-	int right = size;
-	int partition = 0;
-	while(left < right){
-		int mid = (left + right) / 2;
+	int right = size - 1;
+	while(left <= right){
+		unsigned int mid = left + (right - left) / 2;
 		if(B[mid] == value) {
 			return mid;
 		}
@@ -98,37 +92,37 @@ int binary_search(keytype* B, int size, int value){
 
 
 keytype* combine(keytype* c1, int size1,keytype v, keytype* c2, int size2){
-        int i=0;  
+        int i=0;
 	    keytype* array = new keytype[size1+size2+1];
         for(i=0;i<size1;i++)
         array[i] = c1[i];
-         
+
         array[i] = v;
         i++;
-         
+
         for(int j=0;j<size2;j++)
         {
         array[i++] = c2[j];
         }
         return array;
-           
+
 }
 
 
 keytype* pmerge(keytype* A, int size1, keytype* B, int size2){
         if(size1 == 0)
         	return B;
-        
+
 
 	if (size2 ==0)
         	return A;
-        
+
         int vindex = size1 / 2;
 	keytype v = A[vindex];
 	keytype* A2 = A + vindex + 1;
 	int k = binary_search(B, size2, v);
 	keytype* B2 = B + k;
-	keytype* c1 = pmerge(A, vindex, B, k);
+	keytype* c1 = pmerge(A, vindex, B, k );
 	int c1size = vindex + k;
 	keytype* c2 = pmerge(A2, size1 - vindex - 1, B2, size2 - k);
 	int c2size = size1 - vindex - 1 + size2 - k;
@@ -145,7 +139,12 @@ keytype* pmergesort(int N, keytype* A){
 	int mid = N / 2;
 	keytype* leftsorted = pmergesort(mid, A);
 	keytype* rightsorted = pmergesort(N-mid, A+mid);
-	return pmerge(leftsorted, mid, rightsorted, N-mid);
+	print_keytype(leftsorted,mid);
+	print_keytype(rightsorted,N-mid);
+	keytype* returned = pmerge(leftsorted, mid, rightsorted, N-mid);
+	print_keytype(returned,N);
+	return returned;
+
 }
 
 
